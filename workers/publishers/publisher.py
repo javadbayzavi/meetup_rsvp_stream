@@ -1,4 +1,5 @@
 from workers.worker import worker
+from kafka import KafkaProducer
 
 
 class publisher(worker):
@@ -10,6 +11,10 @@ class publisher(worker):
         self.pushResult()
         pass
     
+    def processMeAsync(self):
+        #production starts from here
+        pass
+           
     def pushResult(self):
         pass
     

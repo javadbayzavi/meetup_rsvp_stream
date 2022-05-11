@@ -1,5 +1,7 @@
 
 from abc import ABC, abstractmethod
+from threading import Thread
+import time
 
 
 class workerInterface(ABC):
@@ -19,6 +21,15 @@ class workerInterface(ABC):
     def processMe(self):
         pass
 
+    @abstractmethod
+    def runAsync(self) -> None:
+        pass
+
+    @abstractmethod
+    def processMeAsyc(self):
+        pass
+
+
 
 class worker(workerInterface):
     @property
@@ -29,6 +40,12 @@ class worker(workerInterface):
     def broker(self,address) -> None:
         self._broker = address
     
-    # Strategy Pattern, initiate for DI
-    def run(self):
+    #TODO: develop process method to work on sleep and timer for process on/off switching
+    def run(self) -> None:
         self.processMe()
+        time.sleep(10)
+
+    
+    def runAsync(self) -> None:
+        process = Thread(target=self.processMeAsyc, args=(""))
+        process.start()

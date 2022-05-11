@@ -1,4 +1,5 @@
 from workers.worker import worker
+from kafka import KafkaConsumer
 
 
 class consumer(worker):
@@ -9,3 +10,8 @@ class consumer(worker):
     def processMe(self):
         #Initiate consumer process
         pass
+
+    def processMeAsync(self):
+        #production starts from here
+        pass
+       
