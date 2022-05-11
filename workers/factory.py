@@ -1,7 +1,7 @@
 from email.policy import default
-from consumer import consumer
-from producer import producer
-from worker import workerInterface
+from workers.consumers.consumer import consumer
+from workers.producers.producer import producer
+from workers.worker import workerInterface
 
 
 class WorkerFactory:

@@ -1,4 +1,4 @@
-from worker import worker
+from workers.worker import worker
 
 
 class consumer(worker):
