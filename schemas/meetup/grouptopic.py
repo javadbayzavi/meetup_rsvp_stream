@@ -1,7 +1,9 @@
-import lib.models as model
+from lib.models.model import model
+
 class grouptopic(model):
-    def __init__(self,id,name,urlk) -> None:
-        super().__init__(id)
-        self._topic_name = name
-        self._urlKey = urlk
-        #TODO: initiate the group topic moel at initiator
+    def __init__(self,propertyList) -> None:
+        super().__init__()
+        if "topic_name" in propertyList and propertyList["topic_name"] != None:
+            self._topic_name = propertyList["topic_name"]
+        if "urlkey" in propertyList and propertyList["urlkey"] != None:
+            self._urlKey = propertyList["urlkey"]

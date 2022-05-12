@@ -1,6 +1,3 @@
-#TODO: the app start the processing workflow
-#1. Initiate producer thread
-#2. run the producer
 from lib.utils.config import config
 from workers.factory import WorkerFactory
 #Workflow 

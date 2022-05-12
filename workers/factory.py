@@ -1,4 +1,3 @@
-from email.policy import default
 from lib.utils.config import config
 from workers.consumers.consumer import consumer
 from workers.producers.producer import producer

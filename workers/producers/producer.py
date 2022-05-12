@@ -1,7 +1,7 @@
-from schemas.meetup.rsvp import rsvp
-from schemas.meetup.venue import venue
+from kafka import KafkaClient
+from lib.utils.config import config
+import requests
 from workers.worker import worker
-#from kafka import KafkaProducer
 import json
 
 class producer(worker):
@@ -14,26 +14,8 @@ class producer(worker):
         #load Raw Data from stream
         data = self.loadJoson()
 
-        #Extract venue object
-        
-        m_venue = venue(data["venue"])
-
-        #Extract member object
-
-        #Extract event object
-
-        #Extract group object
-
-        #Extract group topic object
-
-        #Extract rsvp object
-
-        
-        print(m_venue)
-        #production starts from here
-
-    def pushStream(self, *data:rsvp):
-        a = True
+        #push the stream into Kafka Broker
+        self.pushStream(data)
 
     #TODO: Develop Aysnc method for producer
     def processMeAsync(self):
@@ -52,8 +34,20 @@ class producer(worker):
         return True
 
 
+    #Push entry message into kafka broker
+    def pushStream(self , strem):
+        client = KafkaClient(hosts = config.BROKER_PATH)
+        topic = client.topics["test"]
+        content = json.dumps(strem , indent=4)
+
+        with topic.get_sync_producer() as producer:
+            encoded_message = content.encode("utf-8")
+            producer.produce(encoded_message)
+
+
+    #Load json stream from meetup RSVP
     def loadJoson(self) -> any:
-        data = None
-        with open('test.json', 'r', encoding="utf8") as f:
-            data = json.load(f)
+        #TODO: Fetch data from meetup RSVP
+        req  = requests.get(config.MEETUP_RSVP_ENDPOINT)
+        data = req.json()
         return data
