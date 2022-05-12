@@ -36,16 +36,29 @@ class worker(workerInterface):
     def broker(self) -> str:
         return self._broker
     
-    @property.setter
+    @broker.setter
     def broker(self,address) -> None:
         self._broker = address
     
     #TODO: develop process method to work on sleep and timer for process on/off switching
     def run(self) -> None:
-        self.processMe()
-        time.sleep(10)
+        if self.connect() == True:
+            self.processMe()
+            time.sleep(1)
 
     
     def runAsync(self) -> None:
         process = Thread(target=self.processMeAsyc, args=(""))
         process.start()
+
+    def connect(self) -> bool:
+        pass
+
+    def disconnect(self) -> bool:
+        pass
+
+    def processMe(self):
+        pass
+
+    def processMeAsyc(self):
+        pass

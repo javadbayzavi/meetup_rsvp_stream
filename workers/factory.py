@@ -1,4 +1,5 @@
 from email.policy import default
+from lib.utils.config import config
 from workers.consumers.consumer import consumer
 from workers.producers.producer import producer
 from workers.worker import workerInterface
@@ -11,11 +12,11 @@ class WorkerFactory:
     @staticmethod
     def createWorker(workerType) -> workerInterface:
         match workerType:
-            case "producer":
-                return producer("")
-            case "consumer":
-                return consumer("")
-            case "publisher":
-                return producer("")
-            case "subscriber":
-                return consumer("")                
+            case config.PRODUCER_KEY:
+                return producer("producerName")
+            case config.CONSUMER_KEY:
+                return consumer("consumerName")
+            case config.PUBLISHER_KEY:
+                return publisher("publisherName")
+            case config.SUBSCRIBER_KEY:
+                return subscriber("subscriberName")                
