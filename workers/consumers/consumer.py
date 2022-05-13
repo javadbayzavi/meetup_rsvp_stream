@@ -1,4 +1,6 @@
-import json
+from genericpath import exists
+from lib.core.server import server
+from lib.utils.config import config
 from workers.worker import worker
 from kafka import KafkaConsumer
 from schemas.meetup.rsvp import rsvp
@@ -7,37 +9,95 @@ from schemas.meetup.event import event
 from schemas.meetup.member import member
 from schemas.meetup.group import group
 from schemas.meetup.grouptopic import grouptopic
+from lib.core.analyze import analyzer
+import pandas as pd
+import json
+
 
 class consumer(worker):
+    __consumer = None
+        
     def __init__(self, broker) -> None:
-        #TODO: some string checking before set broker config
+        super().__init__()
         self.broker = broker
+        self.daemon = True
+        self.__consumer = KafkaConsumer(bootstrap_servers = config.BROKER_PATH,
+                                        auto_offset_reset='earliest',
+                                        enable_auto_commit=True,
+                                        consumer_timeout_ms = 4000,
+                                        #value_deserializer = lambda v: json.loads(v.decode('utf-8'))   
+                                        #value_deserializer = lambda v: bytes.decode('utf-8'))   
+                                        )
     
     def processMe(self):
+        #Check for live connection to broker
+        if self.connect() == False:
+            return
 
+        if server.brokerChecking(config.PRODUCER_TOPIC) == False:
+            server.brokerConfigReset()
+
+        #Subscribe consumer to topic
+        self.__consumer.subscribe([config.PRODUCER_TOPIC])
+
+        #pull recent message from topic
         data = self.pullStream()
-        #Extract venue object
-        m_venue = venue(data["venue"])
 
-        #Extract member object
-        m_member = member(data["member"])
+        #extract pulled message into business objects(meetup entites)
+        rsvpmessages = self.extractMessage(data)
 
-        #Extract event object
-        m_event = event(data["event"])
+        #dump extracted object to disk for aggregation
+        self.dumpToDisk(rsvpmessages)
 
-        #Extract group topic object
-        m_groupTopics = []
-        topicList = data["group"]["group_topics"]
-        for topic in topicList:
-            m_groupTopics.append(grouptopic(topic))
+    def dumpToDisk(self,new_data, filename='data.json'):
+        if exists(filename) == False:
+            file = open(filename,"w")
+            json.dump(json.dumps(new_data), file, indent = 4)
 
-        #Extract group object
-        m_group = group(data["group"],m_groupTopics)
+        else:
+            with open(filename,'r+') as file:
+                # First we load existing data into a dict.
+                file_data = json.load(file)
+                # Join new_data with file_data inside emp_details
+                file_data.append(x for x in new_data)
+                # Sets file's current position at offset.
+                file.seek(0)
+                # convert back to json.
+                json.dump(file_data, file, indent = 4)
+ 
+
+    
+    def dumpToCloud(self,data):
+        pass
 
 
-        #Extract rsvp object
-        m_rsvp = rsvp(data["rsvp_id"],data["visibility"],["response"],["guests"],data["mtime"],m_event,m_group,m_venue,m_member)
+    def extractMessage(self,data) -> any:
+        res = []
+        for rsItem in data:
+            #Extract venue object
+            m_venue = venue(rsItem["venue"])
 
+            #Extract member object
+            m_member = member(rsItem["member"])
+
+            #Extract event object
+            m_event = event(rsItem["event"])
+
+            #Extract group topic object
+            m_groupTopics = []
+            topicList = rsItem["group"]["group_topics"]
+            for topic in topicList:
+                m_groupTopics.append(grouptopic(topic))
+
+            #Extract group object
+            m_group = group(rsItem["group"],m_groupTopics)
+
+
+            #Extract rsvp object
+            m_rsvp = rsvp(rsItem["rsvp_id"],rsItem["visibility"],["response"],["guests"],rsItem["mtime"],m_event,m_group,m_venue,m_member)
+            res.append(m_rsvp)
+
+        return res
 
     def processMeAsync(self):
             data = self.pullStream()
@@ -45,19 +105,24 @@ class consumer(worker):
         #production starts from here
         
 
-    #TODO: Connect operation must be expanded
     def connect(self) -> bool:
-        return True
+        return self.__consumer.bootstrap_connected()
     
 
-    #TODO: Disconnect operation must be expanded
     def disconnect(self) -> bool:
-        return True
+        self.__consumer.close()
+        return self.__consumer.bootstrap_connected()
 
 
     def pullStream(self) -> any:
-        data = None
-        #TODO: pull message from Kafka Broker
-        with open('test.json', 'r', encoding="utf8") as f:
-            data = json.load(f)
+        data = []
+        for message in self.__consumer:
+        #     data.append(message)
+        # while True:
+        #     message = next(self.__consumer)
+        #     if message == None:
+        #         break
+            jdata = json.loads(message.value)
+            data.append(jdata)
+        
         return data

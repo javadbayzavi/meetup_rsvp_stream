@@ -1,5 +1,7 @@
+from lib.core.webserver import webserver
 from lib.utils.config import config
 from workers.factory import WorkerFactory
+from lib.core.server import server
 #Workflow 
 # 1. Initiate the producer
 # 2. run the producer as a thread
@@ -20,25 +22,32 @@ from workers.factory import WorkerFactory
 # s
 
 def main():
+
+    #Reset the broker
+    #server.brokerReset()
+
+    #Broker configuration
+    server.brokerConfigReset()
+    
     #1. Initiate producer
     producer = WorkerFactory.createWorker(workerType = config.PRODUCER_KEY)
 
-    #1. Initiate consumer
-    #consumer = WorkerFactory.createWorker(workerType = config.CONSUMER_KEY)
+    #2. Initiate consumer
+    consumer = WorkerFactory.createWorker(workerType = config.CONSUMER_KEY)
 
-    #1. Initiate publisher
+    #3. Initiate publisher
     #publisher = WorkerFactory.createWorker(workerType = config.PUBLISHER_KEY)
 
-    #1. Initiate subscriber
+    #4. Initiate subscriber
     #subscriber = WorkerFactory.createWorker(workerType = config.SUBSCRIBER_KEY)
 
 
-    while 1:
-        producer.run()
-       # consumer.run()
+    ##while 1:
+    producer.run()
+    consumer.run()
        # publisher.run()
        # subscriber.run()
-
+    webserver.startUp()
         
 
 if __name__ == "__main__":

@@ -4,14 +4,8 @@ from threading import Thread
 import time
 
 
-class workerInterface(ABC):
-    @abstractmethod
-    def connect(self) -> bool:
-        pass
-
-    @abstractmethod
-    def disconnect(self) -> bool:
-        pass
+class workerInterface(ABC,Thread):
+    daemon: bool
 
     @abstractmethod
     def run(self):
@@ -42,20 +36,12 @@ class worker(workerInterface):
     
     #TODO: develop process method to work on sleep and timer for process on/off switching
     def run(self) -> None:
-        if self.connect() == True:
-            self.processMe()
-            time.sleep(1)
+        self.processMe()
 
     
     def runAsync(self) -> None:
         process = Thread(target=self.processMeAsyc, args=(""))
         process.start()
-
-    def connect(self) -> bool:
-        pass
-
-    def disconnect(self) -> bool:
-        pass
 
     def processMe(self):
         pass

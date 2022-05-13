@@ -1,48 +1,50 @@
-from kafka import KafkaClient
+import time
+from kafka import  KafkaProducer
 from lib.utils.config import config
-import requests
+from lib.core.server import server
 from workers.worker import worker
 import json
+import requests
 
 class producer(worker):
     __producer = None
 
     def __init__(self, broker) -> None:
+        super().__init__()
         self.broker = broker
-    
+        self.daemon = True
+        self.__producer = KafkaProducer(bootstrap_servers = config.BROKER_PATH,
+                                        value_serializer=lambda v: json.dumps(v).encode('utf-8'))   
     def processMe(self):
-        #load Raw Data from stream
+        if self.connect() == False:
+            return
+        if server.brokerChecking(config.PRODUCER_TOPIC) == False:
+            server.brokerConfigReset()
+        #while True:
+            #load Raw Data from stream
         data = self.loadJoson()
-
         #push the stream into Kafka Broker
         self.pushStream(data)
 
+        self.__producer.flush()
+
     #TODO: Develop Aysnc method for producer
     def processMeAsync(self):
-            data = self.loadJoson()
-            print(data)
-        #production starts from here
+        data = self.loadJoson()
         
-
-    #TODO: Connect operation must be expanded
     def connect(self) -> bool:
-        return True
+        return self.__producer.bootstrap_connected()
     
 
-    #TODO: Disconnect operation must be expanded
     def disconnect(self) -> bool:
-        return True
+        self.__producer.close()
+        return self.__producer.bootstrap_connected()
 
 
     #Push entry message into kafka broker
     def pushStream(self , strem):
-        client = KafkaClient(hosts = config.BROKER_PATH)
-        topic = client.topics["test"]
-        content = json.dumps(strem , indent=4)
-
-        with topic.get_sync_producer() as producer:
-            encoded_message = content.encode("utf-8")
-            producer.produce(encoded_message)
+        self.__producer.send(config.PRODUCER_TOPIC, strem)
+        time.sleep(1)        
 
 
     #Load json stream from meetup RSVP
