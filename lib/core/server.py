@@ -1,4 +1,3 @@
-import imp
 from kafka.admin import KafkaAdminClient, NewTopic
 from lib.utils.config import config
 
@@ -44,3 +43,6 @@ class server:
             client_id = config.SERVER_CLIENTID
         )
         return topicname in kafka_manager.list_topics()
+    
+
+

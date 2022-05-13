@@ -12,3 +12,8 @@ class config:
     SERVER_CLIENTID = "meetup_rsvp"
     WEBSERVER_HOST = "127.0.0.1"
     WEBSERVER_PORT = 999
+
+    MYSQL_HOST = "localhost"
+    MYSQL_USER = "root"
+    MYSQL_PASS = ""
+    MYSQL_DB = "cities"

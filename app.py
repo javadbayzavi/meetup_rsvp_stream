@@ -36,7 +36,7 @@ def main():
     consumer = WorkerFactory.createWorker(workerType = config.CONSUMER_KEY)
 
     #3. Initiate publisher
-    #publisher = WorkerFactory.createWorker(workerType = config.PUBLISHER_KEY)
+    publisher = WorkerFactory.createWorker(workerType = config.PUBLISHER_KEY)
 
     #4. Initiate subscriber
     #subscriber = WorkerFactory.createWorker(workerType = config.SUBSCRIBER_KEY)
@@ -45,8 +45,9 @@ def main():
     ##while 1:
     producer.run()
     consumer.run()
-       # publisher.run()
+    publisher.run()
        # subscriber.run()
+    #webserver.loadResult()
     webserver.startUp()
         
 

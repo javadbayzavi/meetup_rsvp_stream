@@ -1,8 +1,9 @@
 from genericpath import exists
+import time
 from lib.core.server import server
 from lib.utils.config import config
 from workers.worker import worker
-from kafka import KafkaConsumer
+from kafka import KafkaConsumer, KafkaProducer
 from schemas.meetup.rsvp import rsvp
 from schemas.meetup.venue import venue
 from schemas.meetup.event import event
@@ -16,7 +17,7 @@ import json
 
 class consumer(worker):
     __consumer = None
-        
+    __publisher = None    
     def __init__(self, broker) -> None:
         super().__init__()
         self.broker = broker
@@ -25,9 +26,9 @@ class consumer(worker):
                                         auto_offset_reset='earliest',
                                         enable_auto_commit=True,
                                         consumer_timeout_ms = 4000,
-                                        #value_deserializer = lambda v: json.loads(v.decode('utf-8'))   
-                                        #value_deserializer = lambda v: bytes.decode('utf-8'))   
                                         )
+        self.__publisher = KafkaProducer(bootstrap_servers = config.BROKER_PATH,
+                                        value_serializer=lambda v: json.dumps(v).encode('utf-8'))  
     
     def processMe(self):
         #Check for live connection to broker
@@ -47,7 +48,15 @@ class consumer(worker):
         rsvpmessages = self.extractMessage(data)
 
         #dump extracted object to disk for aggregation
-        self.dumpToDisk(rsvpmessages)
+        #self.dumpToDisk(rsvpmessages)
+
+        #Save the result to persist_data
+        if server.brokerChecking(config.PUBLISHER_TOPIC) == False:
+            server.brokerConfigReset()
+        
+        self.pushResult()
+        
+        self.__publisher.flush()
 
     def dumpToDisk(self,new_data, filename='data.json'):
         if exists(filename) == False:
@@ -64,12 +73,9 @@ class consumer(worker):
                 file.seek(0)
                 # convert back to json.
                 json.dump(file_data, file, indent = 4)
- 
-
     
     def dumpToCloud(self,data):
         pass
-
 
     def extractMessage(self,data) -> any:
         res = []
@@ -117,12 +123,21 @@ class consumer(worker):
     def pullStream(self) -> any:
         data = []
         for message in self.__consumer:
-        #     data.append(message)
-        # while True:
-        #     message = next(self.__consumer)
-        #     if message == None:
-        #         break
             jdata = json.loads(message.value)
             data.append(jdata)
         
         return data
+        
+    def pushResult(self) -> any:
+        data = []
+        for i in range(10):
+            jdata = {
+                "name":"name" + str(i),
+                "lon" : str(2 * i + 12 * 1.5),
+                "lat" : str(2 + i * 12 * 1.5),
+                "point" : i
+                    }
+            data.append(jdata)
+
+        self.__publisher.send(config.PUBLISHER_TOPIC, data)
+        time.sleep(1)        
