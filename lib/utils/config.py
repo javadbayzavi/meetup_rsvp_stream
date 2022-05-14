@@ -6,7 +6,7 @@ class config:
     PRODUCER_KEY = "producer"
     CONSUMER_KEY = "consumer"
     PUBLISHER_KEY = "publisher"
-    SUBSCRIBER_KEY = "subscriber"
+    ANALYZER_KEY = "analyzer"
     DEFAULT_SWITCH_TIME = 10
     MEETUP_RSVP_ENDPOINT = "http://localhost:900/test.json"
     SERVER_CLIENTID = "meetup_rsvp"

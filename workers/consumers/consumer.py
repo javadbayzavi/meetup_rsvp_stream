@@ -10,14 +10,12 @@ from schemas.meetup.event import event
 from schemas.meetup.member import member
 from schemas.meetup.group import group
 from schemas.meetup.grouptopic import grouptopic
-from lib.core.analyze import analyzer
-import pandas as pd
+
 import json
 
 
 class consumer(worker):
     __consumer = None
-    __publisher = None    
     def __init__(self, broker) -> None:
         super().__init__()
         self.broker = broker
@@ -48,15 +46,8 @@ class consumer(worker):
         rsvpmessages = self.extractMessage(data)
 
         #dump extracted object to disk for aggregation
-        #self.dumpToDisk(rsvpmessages)
+        self.dumpToDisk(rsvpmessages)
 
-        #Save the result to persist_data
-        if server.brokerChecking(config.PUBLISHER_TOPIC) == False:
-            server.brokerConfigReset()
-        
-        self.pushResult()
-        
-        self.__publisher.flush()
 
     def dumpToDisk(self,new_data, filename='data.json'):
         if exists(filename) == False:
@@ -105,12 +96,6 @@ class consumer(worker):
 
         return res
 
-    def processMeAsync(self):
-            data = self.pullStream()
-            print(data)
-        #production starts from here
-        
-
     def connect(self) -> bool:
         return self.__consumer.bootstrap_connected()
     
@@ -128,16 +113,3 @@ class consumer(worker):
         
         return data
         
-    def pushResult(self) -> any:
-        data = []
-        for i in range(10):
-            jdata = {
-                "name":"name" + str(i),
-                "lon" : str(2 * i + 12 * 1.5),
-                "lat" : str(2 + i * 12 * 1.5),
-                "point" : i
-                    }
-            data.append(jdata)
-
-        self.__publisher.send(config.PUBLISHER_TOPIC, data)
-        time.sleep(1)        

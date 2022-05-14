@@ -1,0 +1,14 @@
+Environments:
+1. Python 3.10.4
+2. MySql 8.0
+3. Kafka Server 3.10
+4. Node.js
+
+Packages:
+1. MySql_connectors
+2. Kafka-Python
+3. Json
+4. Pandas
+5. Threading
+6. http.server
+

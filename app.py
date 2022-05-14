@@ -27,7 +27,7 @@ def main():
     #server.brokerReset()
 
     #Broker configuration
-    server.brokerConfigReset()
+    #server.brokerConfigReset()
     
     #1. Initiate producer
     producer = WorkerFactory.createWorker(workerType = config.PRODUCER_KEY)
@@ -39,16 +39,16 @@ def main():
     publisher = WorkerFactory.createWorker(workerType = config.PUBLISHER_KEY)
 
     #4. Initiate subscriber
-    #subscriber = WorkerFactory.createWorker(workerType = config.SUBSCRIBER_KEY)
+    analyzer = WorkerFactory.createWorker(workerType = config.ANALYZER_KEY)
 
 
     ##while 1:
-    producer.run()
-    consumer.run()
-    publisher.run()
-       # subscriber.run()
-    #webserver.loadResult()
+    #producer.run()
+    #consumer.run()
+    #analyzer.run()
+    #publisher.run()
     webserver.startUp()
+    a = 10
         
 
 if __name__ == "__main__":

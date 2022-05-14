@@ -3,7 +3,7 @@ from workers.consumers.consumer import consumer
 from workers.producers.producer import producer
 from workers.worker import workerInterface
 from workers.publishers.publisher import publisher
-from workers.subscribers.subscriber import subscriber
+from workers.analyzers.analyzer import analyzer
 
 
 class WorkerFactory:
@@ -17,5 +17,5 @@ class WorkerFactory:
                 return consumer("consumerName")
             case config.PUBLISHER_KEY:
                 return publisher("publisherName")
-            case config.SUBSCRIBER_KEY:
-                return subscriber("subscriberName")                
+            case config.ANALYZER_KEY:
+                return analyzer("analyzerName")                

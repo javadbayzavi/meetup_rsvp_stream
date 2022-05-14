@@ -15,14 +15,6 @@ class workerInterface(ABC,Thread):
     def processMe(self):
         pass
 
-    @abstractmethod
-    def runAsync(self) -> None:
-        pass
-
-    @abstractmethod
-    def processMeAsyc(self):
-        pass
-
 
 
 class worker(workerInterface):
@@ -39,12 +31,5 @@ class worker(workerInterface):
         self.processMe()
 
     
-    def runAsync(self) -> None:
-        process = Thread(target=self.processMeAsyc, args=(""))
-        process.start()
-
     def processMe(self):
-        pass
-
-    def processMeAsyc(self):
         pass

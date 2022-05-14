@@ -18,20 +18,17 @@ class producer(worker):
     def processMe(self):
         if self.connect() == False:
             return
+
         if server.brokerChecking(config.PRODUCER_TOPIC) == False:
             server.brokerConfigReset()
-        #while True:
-            #load Raw Data from stream
+            
+        #load Raw Data from stream
         data = self.loadJoson()
         #push the stream into Kafka Broker
         self.pushStream(data)
 
         self.__producer.flush()
 
-    #TODO: Develop Aysnc method for producer
-    def processMeAsync(self):
-        data = self.loadJoson()
-        
     def connect(self) -> bool:
         return self.__producer.bootstrap_connected()
     
