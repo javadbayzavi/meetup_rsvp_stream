@@ -26,19 +26,23 @@ class analyzer(worker):
         if server.brokerChecking(config.PUBLISHER_TOPIC) == False:
             server.brokerConfigReset()
         
-        #Save the result to persist_data
-        self.pushResult()
+        #load extracted data from persist area
+        data = self.loadFromDisk()
         
+        #Do some basic analysis on trends
+        res = self.analyzeTrend(data)
 
+        #push the result to broker
+        self.pushResult(res)
        
-    def pushResult(self) -> any:
+    def pushResult(self , resutls) -> any:
         data = []
         for i in range(10):
             jdata = {
-                "name":"name" + str(i),
-                "lon" : str(2 * i + 12 * 1.5),
-                "lat" : str(2 + i * 12 * 1.5),
-                "point" : i
+                "name": resutls["city"],
+                "lon" : resutls["lon"],
+                "lat" : resutls["lat"],
+                "point" : resutls["point"]
                     }
             data.append(jdata)
 
@@ -47,6 +51,7 @@ class analyzer(worker):
         time.sleep(1)  
 
     def analyzeTrend(self, data):
+        pass
 
     def loadFromDisk(self):
         data = []
