@@ -56,8 +56,9 @@ def main():
 
     ##while 1:
     #producer.run()
-    appEngine.startManually(producer.broker)
-    appEngine.startManually(consumer.broker)
+    #appEngine.startManually(producer.broker)
+    #appEngine.startManually(consumer.broker)
+    appEngine.startManually(analyzer.broker)
     #analyzer.run()
     #publisher.run()
         

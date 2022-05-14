@@ -14,7 +14,7 @@ class analyzer(worker):
         super().__init__()
         self.broker = broker
         self.daemon = True
-        self.__producer = KafkaProducer(bootstrap_servers = config.BROKER_PATH,
+        self.__analyzer = KafkaProducer(bootstrap_servers = config.BROKER_PATH,
                                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))   
 
     def processMe(self):
@@ -33,7 +33,7 @@ class analyzer(worker):
         res = self.analyzeTrend(data)
 
         #push the result to broker
-        self.pushResult(res)
+        #self.pushResult(res)
        
     def pushResult(self , resutls) -> any:
         data = []
@@ -51,11 +51,17 @@ class analyzer(worker):
         time.sleep(1)  
 
     def analyzeTrend(self, data):
-        pass
+        df = pd.DataFrame(data)
+        print(df.dtypes)
+        print(df.head(5))
+        res = df.groupby(["group_city"]).count()
+        print(res.dtypes)
+        print(res.head(4))
+        
 
     def loadFromDisk(self):
         data = []
-        with open('meetup.json',mode="r+", encoding="utf8") as f:
+        with open('data.json',mode="r", encoding="utf8") as f:
             try:
                 f.seek(0)
                 lines = f.readlines()
