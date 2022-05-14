@@ -6,6 +6,8 @@ import time
 
 class workerInterface(ABC,Thread):
     daemon: bool
+    _sleeptime : int
+    _broker : str
 
     @abstractmethod
     def run(self):
@@ -14,6 +16,14 @@ class workerInterface(ABC,Thread):
     @abstractmethod
     def processMe(self):
         pass
+
+    @property
+    def sleep(self) -> int:
+        return self._sleeptime
+
+    @sleep.setter
+    def sleep(self,sleep:int):
+        self._sleeptime = sleep
 
 
 

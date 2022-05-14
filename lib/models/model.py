@@ -3,7 +3,7 @@ from random import randint
 
 
 
-class model:
+class model(dict):
 # class model(ABC):
     def __init__(self,id="") -> None:
         self.id = id

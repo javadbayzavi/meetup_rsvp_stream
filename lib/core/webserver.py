@@ -1,8 +1,13 @@
+from threading import Thread
 import json
 from lib.utils.config import config
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import os
 from lib.core.db import dbEngine
+
+class serverManager(Thread):
+    def run(self):
+        webserver.startUp()
 
 class webserver(BaseHTTPRequestHandler):
     @staticmethod
@@ -21,13 +26,20 @@ class webserver(BaseHTTPRequestHandler):
     #TODO: get function must be expanded to handle requests from react based app. response shold be in json format
     def do_GET(self):
         out = ""
-        reqpath = self.path
         if self.path.find("city") > 0:
             self.send_response(200)
             self.send_header("Content-type", "application/json")
             self.end_headers()
             out = self.loadResult()
             self.wfile.write(bytes(out, "utf-8"))
+
+        elif self.path.find("meetup") > 0:
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            out = self.loadJson()
+            self.wfile.write(bytes(out, "utf-8")) 
+              
         else:
             self.send_response(200)
             self.send_header("Content-type", "text/html")
@@ -58,4 +70,20 @@ class webserver(BaseHTTPRequestHandler):
             result.append(item)
         return json.dumps(result)
 
+    def loadJson(self):
+        data = ""
+        with open('meetup.json',mode="r+", encoding="utf8") as f:
+            try:
+                f.seek(0)
+                line = f.readline()
+                data = json.dumps(json.loads(line))
+                lines = f.readlines()[1:]
+                f.seek(0)
+                f.truncate()
+                f.writelines(lines)
+            except Exception as error:
+                pass
+            finally:
+                return data
+ 
         

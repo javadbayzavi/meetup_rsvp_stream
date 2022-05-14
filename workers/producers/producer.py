@@ -15,6 +15,7 @@ class producer(worker):
         self.daemon = True
         self.__producer = KafkaProducer(bootstrap_servers = config.BROKER_PATH,
                                         value_serializer=lambda v: json.dumps(v).encode('utf-8'))   
+                                        
     def processMe(self):
         if self.connect() == False:
             return
@@ -23,11 +24,10 @@ class producer(worker):
             server.brokerConfigReset()
             
         #load Raw Data from stream
-        data = self.loadJoson()
+        data = self.loadJson()
         #push the stream into Kafka Broker
         self.pushStream(data)
 
-        self.__producer.flush()
 
     def connect(self) -> bool:
         return self.__producer.bootstrap_connected()
@@ -41,12 +41,13 @@ class producer(worker):
     #Push entry message into kafka broker
     def pushStream(self , strem):
         self.__producer.send(config.PRODUCER_TOPIC, strem)
+        self.__producer.flush()
         time.sleep(1)        
 
 
     #Load json stream from meetup RSVP
-    def loadJoson(self) -> any:
-        #TODO: Fetch data from meetup RSVP
+    def loadJson(self) -> any:
         req  = requests.get(config.MEETUP_RSVP_ENDPOINT)
         data = req.json()
         return data
+    

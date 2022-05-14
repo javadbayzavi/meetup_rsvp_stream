@@ -8,10 +8,10 @@ class config:
     PUBLISHER_KEY = "publisher"
     ANALYZER_KEY = "analyzer"
     DEFAULT_SWITCH_TIME = 10
-    MEETUP_RSVP_ENDPOINT = "http://localhost:900/test.json"
     SERVER_CLIENTID = "meetup_rsvp"
     WEBSERVER_HOST = "127.0.0.1"
     WEBSERVER_PORT = 999
+    MEETUP_RSVP_ENDPOINT = "http://" + WEBSERVER_HOST + ":" + str(WEBSERVER_PORT) + "/meetup"
 
     MYSQL_HOST = "localhost"
     MYSQL_USER = "root"

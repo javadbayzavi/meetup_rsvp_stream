@@ -1,7 +1,8 @@
+from lib.core.schedulerEngine import schedulerEngine
 from lib.core.webserver import webserver
 from lib.utils.config import config
 from workers.factory import WorkerFactory
-from lib.core.server import server
+
 #Workflow 
 # 1. Initiate the producer
 # 2. run the producer as a thread
@@ -42,13 +43,23 @@ def main():
     analyzer = WorkerFactory.createWorker(workerType = config.ANALYZER_KEY)
 
 
+
+    #schedule all the app engine part for mutually run
+    appEngine = schedulerEngine()
+    appEngine.schedule(producer)
+    appEngine.schedule(consumer)
+    appEngine.schedule(publisher)
+    appEngine.schedule(analyzer)
+
+    #Start the app engine
+    #appEngine.engineStart()
+
     ##while 1:
     #producer.run()
-    #consumer.run()
+    appEngine.startManually(producer.broker)
+    appEngine.startManually(consumer.broker)
     #analyzer.run()
     #publisher.run()
-    webserver.startUp()
-    a = 10
         
 
 if __name__ == "__main__":
