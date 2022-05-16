@@ -11,4 +11,5 @@ Packages:
 4. Pandas
 5. Threading
 6. http.server
-
+7. Pymongo (working with MongoDB)
+8. dnspython (working with MongoDB)

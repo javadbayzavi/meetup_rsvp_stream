@@ -32,7 +32,7 @@ class rsvp(model):
 
         dict.__init__(self, id = self.id, visibility = self.visibility, response = self.response, guests = self.guests , 
             mtime = self.mtime, group_name = self.group_name, group_city = self.group_city, group_lat = self.group_lat,
-            group_lon = self.group_name, group_country = self.group_country)
+            group_lon = self.group_lon, group_country = self.group_country)
 
     def toJson(self):
         return json.dumps(self, default=lambda o: o.__dict__)

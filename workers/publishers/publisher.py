@@ -2,38 +2,33 @@ import json
 from lib.core.server import server
 from lib.utils.config import config
 from workers.worker import worker
-from kafka import KafkaConsumer
 from lib.core.db import dbEngine
 
 
 class publisher(worker):
-    __publisher = None
-        
-    def __init__(self, broker) -> None:
-        super().__init__()
-        self.broker = broker
-        self.daemon = True
-        self.__publisher = KafkaConsumer(bootstrap_servers = config.BROKER_PATH,
-                                        auto_offset_reset='earliest',
-                                        enable_auto_commit=True,
-                                        consumer_timeout_ms = 4000,
-                                        )
+    def __init__(self, name,  broker) -> None:
+        super().__init__(name, broker)
     
     def processMe(self):
-        if self.connect() == False:
-            return
+        try:
+            if server.brokerChecking(config.PUBLISHER_TOPIC) == False:
+                server.brokerConfigReset()
 
-        if server.brokerChecking(config.PUBLISHER_TOPIC) == False:
-            server.brokerConfigReset()
+            #Subscribe consumer to topic
+            self.brokerCLient.subscribe([config.PUBLISHER_TOPIC])
 
-        #Subscribe consumer to topic
-        self.__publisher.subscribe([config.PUBLISHER_TOPIC])
+            #pull recent message from topic
+            data = self.pullStream()
 
-        #pull recent message from topic
-        data = self.pullStream()
+            #dump new result into Db for client resolution
+            self.dumpDb(data.pop())
+        
+            self.updateActionList("processed") 
+        except Exception as ex:
+            self.updateActionList(" exception catched. caused by:" + str(ex))
+            self._unhealthyrun += 1
+            pass
 
-        #dump new result into Db for client resolution
-        self.dumpDb(data.pop())
 
     def dumpDb(self, data):
         if data == None:
@@ -49,36 +44,23 @@ class publisher(worker):
             stmt = "Insert into city_trend (name,lon,lat,point) VALUES (%s,%s,%s,%s)"
             params = (res["name"],res["lon"],res["lat"],res["point"])
             db_persist.exeuteQuery(stmt,params)
+
+        self.updateActionList("result dumped to DB") 
     
 
     def connect(self) -> bool:
-        return self.__publisher.bootstrap_connected()
+        return self.brokerCLient.bootstrap_connected()
     
 
     def disconnect(self) -> bool:
-        self.__publisher.close()
-        return self.__publisher.bootstrap_connected()
-
+        self.brokerCLient.close()
+        return self.brokerCLient.bootstrap_connected()
    
-    def processMeAsync(self):
-        #production starts from here
-        pass
-           
     def pullStream(self) -> any:
         data = []
-        for message in self.__publisher:
+        for message in self.brokerCLient:
             jdata = json.loads(message.value)
             data.append(jdata)
-        return data
-
-    def pullStreamTemp(self) -> any:
-        data = []
-        for i in range(10):
-            jdata = {
-                "name":"name" + str(i),
-                "lon" : str(2 * i + 12 * 1.5),
-                "lat" : str(2 + i * 12 * 1.5),
-                "point" : i
-                    }
-            data.append(jdata)
+        
+        self.updateActionList("stream pulled") 
         return data

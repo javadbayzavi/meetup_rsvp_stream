@@ -12,10 +12,10 @@ class WorkerFactory:
     def createWorker(workerType) -> workerInterface:
         match workerType:
             case config.PRODUCER_KEY:
-                return producer("producerName")
+                return producer("producerName" , config.PRODUCER_KEY)
             case config.CONSUMER_KEY:
-                return consumer("consumerName")
+                return consumer("consumerName" , config.CONSUMER_KEY)
             case config.PUBLISHER_KEY:
-                return publisher("publisherName")
+                return publisher("publisherName" , config.PUBLISHER_KEY)
             case config.ANALYZER_KEY:
-                return analyzer("analyzerName")                
+                return analyzer("analyzerName" , config.ANALYZER_KEY)                

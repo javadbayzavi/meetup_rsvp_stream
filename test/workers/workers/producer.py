@@ -1,20 +1,18 @@
+from hashlib import new
+from unicodedata import name
 from workers.producers.producer import producer
-from workers.worker import worker
 import unittest
 
 class TestProducer(unittest.TestCase):
-    def test_connect(self):
-        #TODO:Must be developed 
-        prod = producer("")
-        self.assertTrue(prod.connect())
-        self.assertFalse(prod.connect())
+    def test_broker(self):
+        self.assertRaises(Exception , producer())
+        self.assertRaises(Exception , producer(broker = ''))
+        self.assertRaises(Exception , producer(name = ''))
+        self.assertRaises(Exception , producer(name = 'Test' , broker = ''))
+        self.assertRaises(Exception , producer(name = 'Test' , broker = 'brokerTest'))
+        self.assertIsInstance(producer(name = 'Test' , broker = 'producer'), type(producer))
 
-    def test_disconnect(self):
-        #TODO:Must be developed 
-        prod = producer("")
-        self.assertTrue(prod.disconnect())
-        self.assertFalse(prod.disconnect())
-
+    def test_loadJson(self):
 
 
 
