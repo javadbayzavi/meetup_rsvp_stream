@@ -47,15 +47,6 @@ class publisher(worker):
 
         self.updateActionList("result dumped to DB") 
     
-
-    def connect(self) -> bool:
-        return self.brokerCLient.bootstrap_connected()
-    
-
-    def disconnect(self) -> bool:
-        self.brokerCLient.close()
-        return self.brokerCLient.bootstrap_connected()
-   
     def pullStream(self) -> any:
         data = []
         for message in self.brokerCLient:
