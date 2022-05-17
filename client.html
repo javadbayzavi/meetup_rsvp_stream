@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<script type="text/javascript">
+window.onload = function() {
+
+var options = {
+	exportEnabled: true,
+	animationEnabled: true,
+	title:{
+		text: "Trends"
+	},
+	legend:{
+		horizontalAlign: "right",
+		verticalAlign: "center"
+	},
+	data: [{
+		type: "pie",
+		showInLegend: true,
+		toolTipContent: "<b>{name}</b>: ${y} (#percent%)",
+		indexLabel: "{name}",
+		legendText: "{name} (#percent%)",
+		indexLabelPlacement: "inside",
+		dataPoints: [
+			{ y: 6566.4, name: "Housing" },
+			{ y: 2599.2, name: "Food" },
+			{ y: 1231.2, name: "Fun" },
+			{ y: 1368, name: "Clothes" },
+			{ y: 684, name: "Others"},
+			{ y: 1231.2, name: "Utilities" }
+		]
+	}]
+};
+piedata = [];
+    $.getJSON('http://localhsot:999/summary', function(data) {
+
+        data.forEach(element => {
+            
+        });
+    piedata = `City: ${data.name}<br>
+                point: ${data.point}<br>
+                Unix time: ${data.milliseconds_since_epoch}`
+    });
+
+$("#chartContainer").CanvasJSChart(options);
+
+}
+</script>
+</head>
+<body>
+<div id="chartContainer" style="height: 370px; width: 100%;"></div>
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>  
+<script type="text/javascript" src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+</body>
+</html>
