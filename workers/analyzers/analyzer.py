@@ -1,5 +1,6 @@
 import json
 from numpy import sort
+from lib.core.analyzeEngine import analyzerEngine
 from lib.core.server import server
 from lib.utils.config import config
 from workers.worker import worker
@@ -37,21 +38,10 @@ class analyzer(worker):
         self.updateActionList("stream pushed") 
 
     def analyzeTrend(self, data):
-        result = []
-        res = pd.DataFrame(data).groupby("group_city", sort = False)
-        for name,group in res:
-            jdata = {
-                        "name": name,
-                        "lon" : group["group_lon"].iloc[0],
-                        "lat" : group["group_lat"].iloc[0],
-                        "point" : len(group)
-                    }    
-            result.append(jdata)        
+        dataAnalyzer = analyzerEngine()
+        result = dataAnalyzer.analyzeTrend(data)
 
         self.updateActionList("stream analyzed") 
-
-        def keysort(e):
-            return e['point']
 
         result.sort(key =lambda e : e["point"], reverse=True)
 
