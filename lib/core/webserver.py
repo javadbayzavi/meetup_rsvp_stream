@@ -1,3 +1,4 @@
+import codecs
 from threading import Thread
 import json
 from lib.utils.config import config
@@ -29,20 +30,31 @@ class webserver(BaseHTTPRequestHandler):
         if self.path.find("city") > 0:
             self.send_response(200)
             self.send_header("Content-type", "application/json")
+            self.send_header('Access-Control-Allow-Origin:' , '*')
             self.end_headers()
             out = self.loadResult()
             self.wfile.write(bytes(out, "utf-8"))
 
         elif self.path.find("summary") > 0:
             self.send_response(200)
+            self.send_header("Content-type", "text/html")
+            self.send_header('Access-Control-Allow-Origin:' , '*')
+            self.end_headers()
+            out = self.renderSummary()
+            self.wfile.write(bytes(out, "utf-8")) 
+
+        elif self.path.find("summaries") > 0:
+            self.send_response(200)
             self.send_header("Content-type", "application/json")
+            self.send_header('Access-Control-Allow-Origin:' , '*')
             self.end_headers()
             out = self.getSummary()
-            self.wfile.write(bytes(out, "utf-8")) 
-              
+            self.wfile.write(bytes(out, "utf-8"))  
+
         elif self.path.find("meetup") > 0:
             self.send_response(200)
             self.send_header("Content-type", "application/json")
+            self.send_header('Access-Control-Allow-Origin:' , '*')
             self.end_headers()
             out = self.loadJson()
             self.wfile.write(bytes(out, "utf-8")) 
@@ -57,21 +69,27 @@ class webserver(BaseHTTPRequestHandler):
             self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
             self.wfile.write(bytes("</body></html>", "utf-8"))
 
-    def getSummary(self):
+    def getSummary(self , limit = 0):
         db_persist = dbEngine()
         stmt = "SELECT SUM(`point`) FROM `city_trend`"
         db_persist.exeuteQuery(stmt,None)
         total = int(db_persist.resu[0][0])
-        stmt = "SELECT name , (`point` / " + str(total) + " * 100) AS `percent` FROM `city_trend`"
+        stmt = "SELECT name , (`point` / " + str(total) + " * 100) AS `percent` FROM `city_trend` order by `percent` desc"
         db_persist.exeuteQuery(stmt,None)
         result = []
         for res in db_persist.resu:
             item = {
-                "name" : res[0],
-                "percent" : str(res[1])
+                "x" : res[0],
+                "y" : str(res[1])
             }
             result.append(item)
-        return json.dumps(result)
+        if limit == 0:
+            return json.dumps(result)
+        else:
+            limititem = []
+            for x in range(limit):
+                limititem.append(result.pop())
+            return json.dumps(limititem)
         
 
     def loadResult(self) -> any:
@@ -106,4 +124,9 @@ class webserver(BaseHTTPRequestHandler):
             finally:
                 return data
  
-        
+    def renderSummary(self):
+        f = codecs.open("summary.html", 'r')
+        content = f.read()
+        content = content.replace('piedata-bereplacedhere', self.getSummary(10))
+        return content
+

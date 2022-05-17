@@ -24,6 +24,8 @@ Installation Procedure:
 
 Notes:
 #analyzed results are available at: http://localhost:999/city
+#compact analyzed results are available at: http://localhost:999/summaries
+#compact analyzed results UI is available at: http://localhost:999/summary
 #input rsvp stream is available at: http://localhost:999/meetup
 #architecture blueprint has depicted in architecture-blueprint.png
 #the app define two sets of kafka topic: raw_topic, result_topic
