@@ -79,8 +79,8 @@ class webserver(BaseHTTPRequestHandler):
         result = []
         for res in db_persist.resu:
             item = {
-                "x" : res[0],
-                "y" : str(res[1])
+                'x' : res[0],
+                'y' : str(res[1])
             }
             result.append(item)
         if limit == 0:
@@ -88,8 +88,8 @@ class webserver(BaseHTTPRequestHandler):
         else:
             limititem = []
             for x in range(limit):
-                limititem.append(result.pop())
-            return json.dumps(limititem)
+                limititem.append(result.pop(0))
+            return limititem
         
 
     def loadResult(self) -> any:
@@ -127,6 +127,11 @@ class webserver(BaseHTTPRequestHandler):
     def renderSummary(self):
         f = codecs.open("summary.html", 'r')
         content = f.read()
-        content = content.replace('piedata-bereplacedhere', self.getSummary(10))
+        values = self.getSummary(10)
+        injectcontent = '['
+        for i in values:
+            injectcontent += '{x :"' + i['x'] + '", y :' + i['y'] + '},'
+        injectcontent += ']' 
+        content = content.replace('piedata-bereplacedhere', injectcontent)
         return content
 

@@ -12,16 +12,16 @@ def main():
     #Initiate DB
     server.dbServerConfig()
     
-    #1. Initiate producer
+    #1. Initiate producer engine part
     producer = WorkerFactory.createWorker(workerType = config.PRODUCER_KEY)
 
-    #2. Initiate consumer
+    #2. Initiate consumer engine part
     consumer = WorkerFactory.createWorker(workerType = config.CONSUMER_KEY)
 
-    #3. Initiate publisher
+    #3. Initiate publisher engine part
     publisher = WorkerFactory.createWorker(workerType = config.PUBLISHER_KEY)
 
-    #4. Initiate subscriber
+    #4. Initiate subscriber engine part
     analyzer = WorkerFactory.createWorker(workerType = config.ANALYZER_KEY)
 
 

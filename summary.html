@@ -3,28 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <script type="text/javascript">
-
-// function extractData(field){
-//     for (var i = 0; i < field.length; i++) {
-//         piedata.push({
-//         x: field[i].name,
-//         y: field[i].percent
-//       });
-//     }
-// }	
+	
 window.onload = function() {
-
-// piedata = [];
-// $.ajax({
-//   type: 'GET',
-//   url: 'http://127.0.0.1:999/summaries',
-//   dataType: 'json',
-//   success: function(field) {
-// 	  	alert('');
-// 		extractData(field)
-//     }
-// });
-
 var options = {
 	exportEnabled: true,
 	animationEnabled: true,
@@ -38,12 +18,11 @@ var options = {
 	data: [{
 		type: "pie",
 		showInLegend: true,
-		toolTipContent: "<b>{name}</b>: ${y} (#percent%)",
-		indexLabel: "{name}",
-		legendText: "{name} (#percent%)",
+		toolTipContent: "<b>{x}</b>: ${y} (#percent%)",
+		indexLabel: "{x}",
+		legendText: "{x} (#percent%)",
 		indexLabelPlacement: "inside",
 		dataPoints: piedata-bereplacedhere
-		// dataPoints: piedata
 	}]
 };
 
