@@ -12,6 +12,7 @@ class config:
     WEBSERVER_HOST = "127.0.0.1"
     WEBSERVER_PORT = 999
     MEETUP_RSVP_ENDPOINT = "http://" + WEBSERVER_HOST + ":" + str(WEBSERVER_PORT) + "/meetup"
+    TREND_ENDPOINT = "http://" + WEBSERVER_HOST + ":" + str(WEBSERVER_PORT) + "/city"
 
     MYSQL_HOST = "localhost"
     MYSQL_USER = "root"

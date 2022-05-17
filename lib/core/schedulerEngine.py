@@ -23,6 +23,12 @@ class schedulerEngine():
         thread.observer = self
         thread.run()
 
+    def getProcessPoolCount(self) -> int:
+        return (len(self.__threadpool))
+
+    def getProcessProfileCount(self) -> int:
+        return (len(self.__threadProfile))
+
     #Simply profiling the last status of the engine part
     def engineProfiling(self,enginePart, status):
         engineprofile = self.__threadProfile[enginePart]
@@ -32,6 +38,7 @@ class schedulerEngine():
         self.engineProfiling(enginePart.broker, ": is saftely killed at" + str(datetime.now()))
         enginePart.join()
         del self.__threadpool[enginePart.broker]
+        del self.__threadProfile[enginePart.broker]
 
     def engineStart(self):
 
