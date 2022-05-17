@@ -1,6 +1,5 @@
 from lib.core.schedulerEngine import schedulerEngine
 from lib.core.server import server
-from lib.core.webserver import webserver
 from lib.utils.config import config
 from workers.factory import WorkerFactory
 
@@ -9,6 +8,9 @@ def main():
 
     #Broker configuration
     server.brokerConfigReset()
+    
+    #Initiate DB
+    server.dbServerConfig()
     
     #1. Initiate producer
     producer = WorkerFactory.createWorker(workerType = config.PRODUCER_KEY)

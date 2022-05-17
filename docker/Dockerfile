@@ -1,0 +1,15 @@
+FROM mysql
+RUN apt-get update
+RUN apt-get install python3
+RUN pip install mySql_connectors
+RUN pip install kafka
+RUN pip install kafka-python
+RUN pip install pandas
+RUN pip install pymongo
+RUN pip install dnspython
+RUN mkdir -p app
+WORKDIR /app
+COPY ../ /app/
+RUN python app.py
+
+

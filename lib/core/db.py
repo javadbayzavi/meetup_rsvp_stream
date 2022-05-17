@@ -24,4 +24,7 @@ class dbEngine:
       self.mydb.commit()
 
   def initiateTable(self):
+    try:
       self.exeuteQuery(self.table_create_stmt,None)
+    except Exception as ex:
+      pass

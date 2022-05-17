@@ -1,0 +1,5 @@
+FROM docker.io/bitnami/kafka:3.1
+RUN apt-get update
+RUN kafka-server-start.sh /config/server.properties
+
+

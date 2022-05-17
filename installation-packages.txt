@@ -13,3 +13,19 @@ Packages:
 6. http.server
 7. Pymongo (working with MongoDB)
 8. dnspython (working with MongoDB)
+
+Installation Procedure:
+1. Create a mysql db 'cities'
+2. check for the availability of 999, 2181,9092 ports
+3. run zookeeper using zookeeper-server-start /config/zookeeper.properties
+4. run kafka using kafka-server-start /config/server.properties
+5. direct to the project root folder
+6. run the project using python app.py
+
+Notes:
+#analyzed results are available at: http://localhost:999/city
+#input rsvp stream is available at: http://localhost:999/meetup
+#architecture blueprint has depicted in architecture-blueprint.png
+#the app define two sets of kafka topic: raw_topic, result_topic
+#in case of running kafka server in a different host the configuration must be update in config.py file : [projectroot]/lib/utils/config.py
+#Containerized declarative files placed in docker folder

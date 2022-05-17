@@ -4,7 +4,22 @@
 <meta charset="UTF-8">
 <script type="text/javascript">
 window.onload = function() {
-
+piedata = [];
+$.ajax({
+  type: 'GET',
+  url: 'http://127.0.0.1:999/summary',
+  dataType: 'json',
+  success: function(field) {
+    for (var i = 0; i < field.length; i++) {
+        alert(i);
+        piedata.push({
+        x: field[i].name,
+        y: field[i].percent
+      });
+    }
+    }
+});
+alert(piedata);
 var options = {
 	exportEnabled: true,
 	animationEnabled: true,
@@ -22,26 +37,9 @@ var options = {
 		indexLabel: "{name}",
 		legendText: "{name} (#percent%)",
 		indexLabelPlacement: "inside",
-		dataPoints: [
-			{ y: 6566.4, name: "Housing" },
-			{ y: 2599.2, name: "Food" },
-			{ y: 1231.2, name: "Fun" },
-			{ y: 1368, name: "Clothes" },
-			{ y: 684, name: "Others"},
-			{ y: 1231.2, name: "Utilities" }
-		]
+		dataPoints: piedata
 	}]
 };
-piedata = [];
-    $.getJSON('http://localhsot:999/summary', function(data) {
-
-        data.forEach(element => {
-            
-        });
-    piedata = `City: ${data.name}<br>
-                point: ${data.point}<br>
-                Unix time: ${data.milliseconds_since_epoch}`
-    });
 
 $("#chartContainer").CanvasJSChart(options);
 

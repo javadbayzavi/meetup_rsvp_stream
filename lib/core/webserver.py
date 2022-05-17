@@ -33,6 +33,13 @@ class webserver(BaseHTTPRequestHandler):
             out = self.loadResult()
             self.wfile.write(bytes(out, "utf-8"))
 
+        elif self.path.find("summary") > 0:
+            self.send_response(200)
+            self.send_header("Content-type", "application/json")
+            self.end_headers()
+            out = self.getSummary()
+            self.wfile.write(bytes(out, "utf-8")) 
+              
         elif self.path.find("meetup") > 0:
             self.send_response(200)
             self.send_header("Content-type", "application/json")
@@ -50,9 +57,22 @@ class webserver(BaseHTTPRequestHandler):
             self.wfile.write(bytes("<p>This is an example web server.</p>", "utf-8"))
             self.wfile.write(bytes("</body></html>", "utf-8"))
 
-    
-    def do_POST(self):
-        pass
+    def getSummary(self):
+        db_persist = dbEngine()
+        stmt = "SELECT SUM(`point`) FROM `city_trend`"
+        db_persist.exeuteQuery(stmt,None)
+        total = int(db_persist.resu[0][0])
+        stmt = "SELECT name , (`point` / " + str(total) + " * 100) AS `percent` FROM `city_trend`"
+        db_persist.exeuteQuery(stmt,None)
+        result = []
+        for res in db_persist.resu:
+            item = {
+                "name" : res[0],
+                "percent" : str(res[1])
+            }
+            result.append(item)
+        return json.dumps(result)
+        
 
     def loadResult(self) -> any:
         stmt = "Select * from city_trend order by point desc"

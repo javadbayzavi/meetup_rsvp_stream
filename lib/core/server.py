@@ -1,4 +1,5 @@
 from kafka.admin import KafkaAdminClient, NewTopic
+from lib.core.db import dbEngine
 from lib.utils.config import config
 
 class server:
@@ -45,4 +46,7 @@ class server:
         return topicname in kafka_manager.list_topics()
     
 
+    def dbServerConfig():
+        db = dbEngine();
+        db.initiateTable()
 
