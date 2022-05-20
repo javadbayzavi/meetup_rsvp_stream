@@ -1,5 +1,14 @@
 FROM docker.io/bitnami/kafka:3.1
 RUN apt-get update
-RUN kafka-server-start.sh /config/server.properties
-
+RUN apt-get install python3
+RUN pip install mySql_connectors
+RUN pip install kafka
+RUN pip install kafka-python
+RUN pip install pandas
+RUN pip install pymongo
+RUN pip install dnspython
+RUN mkdir -p app
+WORKDIR /app
+COPY ../ /app/
+RUN python app.py
 

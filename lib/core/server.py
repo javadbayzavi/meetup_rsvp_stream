@@ -47,6 +47,7 @@ class server:
     
 
     def dbServerConfig():
-        db = dbEngine();
+        db = dbEngine()
+        db.initiateDB()
         db.initiateTable()
 

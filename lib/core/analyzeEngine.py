@@ -14,7 +14,7 @@ class analyzerEngine:
                         "point" : len(group)
                     }    
             result.append(jdata)   
-
+        return result
     def classifyVenues(self,data):
         pass
 

@@ -7,7 +7,7 @@ from workers.factory import WorkerFactory
 def main():
 
     #Broker configuration
-    server.brokerConfigReset()
+    #server.brokerConfigReset()
     
     #Initiate DB
     server.dbServerConfig()
